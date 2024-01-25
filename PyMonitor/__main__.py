@@ -75,6 +75,22 @@ class Window:
             self.master.update()
 
 
+    def find_process(self):
+        """Method finds the process consuming the most memory and cpu takes no arguments"""
+        high_mem = psutil.process_iter()
+
+        for proc in high_mem:
+            try:
+                pinfo = proc.as_dict(attrs=["pid", "name", "username"])
+                sorted(pinfo.items(), key=lambda x: x[1])
+                pinfo["vms"] = proc.memory_info().vms / (1024 * 1024)
+
+            except psutil.NoSuchProcess:
+                pass
+            else:
+                self.l.insert(3, f"Process: {pinfo}")
+                self.master.update()
+
 if __name__ == "__main__":
     # line below creates the main window and runs in main loop for testing.
     root = tk.Tk()
